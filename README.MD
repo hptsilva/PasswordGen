@@ -49,7 +49,7 @@ php password generate <length> <site>
 ```
 ```php
 # Altere o site da senha inserindo o ID correspondente. 
-php password update <id>
+php password update <id> <site>
 ```
 ```php
 # Apagar do registro a senha a partir do ID fornecido.
