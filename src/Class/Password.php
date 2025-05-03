@@ -44,7 +44,7 @@ class Password
             $password .= $mergedChars[$randomIndex];
         }
 
-        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USERN'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
         $cnx = $connectionDB->connect();
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
