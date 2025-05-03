@@ -39,18 +39,20 @@ PasswordGen é uma aplicação de linha de comando (CLI) para gerar, armazenar, 
 
 ## Uso
 Comandos disponíveis:
+- Listar todas as senhas
 ```php
-# Mostre todas as senhas salvas no registro
 php password show
 ```
+![passwordShow.png](attachment/passwordShow.png)
+- Gerar senha. Insira o tamanho da senha e o nome do site.
 ```php
-# Gerar a senha. Defina o tamanho da senha <length> e o nome do site para essa senha <site>
 php password generate <length> <site>
 ```
+- Alterar site. Insira o novo site e o ID correspondente.
 ```php
-# Altere o site da senha inserindo o ID correspondente. 
 php password update <id> <site>
 ```
+- Deletar uma senha. Insira o ID da senha que deseja excluir.
 ```php
 # Apagar do registro a senha a partir do ID fornecido.
 php password delete <id>
