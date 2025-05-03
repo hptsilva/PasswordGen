@@ -6,17 +6,18 @@ use Dotenv\Dotenv;
 use PDOException;
 use Exception;
 use PDO;
+
+// Cria uma instância do Dotenv
+$dotenv = Dotenv::createImmutable(realpath(__DIR__ . '/../'));
+// Carrega as variáveis do arquivo .env
+$dotenv->load();
+
 class Migrate
 {
     public function makeMigrations(): string
     {
 
-        // Cria uma instância do Dotenv
-        $dotenv = Dotenv::createImmutable(realpath(__DIR__ . '/../'));
-        // Carrega as variáveis do arquivo .env
-        $dotenv->load();
-
-        $database = $_ENV['DATABASE'];
+        $database = $_ENV['DB_DATABASE'];
         $query_verify_database = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$database'";
 
         $query_created_table = "CREATE TABLE passwords (
@@ -25,15 +26,20 @@ class Migrate
         site text NOT NULL
         )";
 
-        $host = $_ENV['HOSTNAME'];
-        $connection = new PDO("mysql:host=$host", $_ENV['USER'], $_ENV['PASSWORD']);
+        $host = $_ENV['DB_HOSTNAME'];
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
+        $connection = new PDO("mysql:host=$host", $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $options);
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stmt = $connection->query($query_verify_database);
         if (!$stmt->fetchColumn()) {
-            $query_created_database = "CREATE DATABASE {$_ENV['DATABASE']}";
+            $query_created_database = "CREATE DATABASE {$_ENV['DB_DATABASE']}";
             $connection->query($query_created_database);
         }
-        $connection = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connection = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
         $cnx = $connection->connect();
         if (!$cnx) {
             return "\033[31mUnable to connect to the database.\033[0m\n";

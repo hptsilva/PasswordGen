@@ -44,7 +44,7 @@ class Password
             $password .= $mergedChars[$randomIndex];
         }
 
-        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
         $cnx = $connectionDB->connect();
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
@@ -70,7 +70,7 @@ class Password
             throw new InvalidID('Invalid ID');
         }
 
-        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
         $cnx = $connectionDB->connect();
 
         if (!$cnx) {
@@ -100,7 +100,7 @@ class Password
             throw new InvalidLength('Site name cannot be empty.');
         }
 
-        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
         $cnx = $connectionDB->connect();
 
         if (!$cnx) {
@@ -116,7 +116,7 @@ class Password
 
     public function listPasswords():array|string
     {
-        $connectionDB = new ConnectionDB($_ENV['HOSTNAME'], $_ENV['USER'], $_ENV['PASSWORD'], $_ENV['DATABASE']);
+        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
         $cnx = $connectionDB->connect();
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
