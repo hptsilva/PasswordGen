@@ -13,7 +13,7 @@ PasswordGen é uma aplicação de linha de comando (CLI) para gerar, armazenar, 
 
 ## Requisitos
 
-- PHP 8.0 ou superior
+- PHP 8.4 ou superior
 - Composer
 - MySQL/MariaDB
 - Extensão PDO habilitada
