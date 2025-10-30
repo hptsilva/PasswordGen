@@ -5,12 +5,14 @@ namespace PasswordGen\Class;
 use PasswordGen\Exceptions\InvalidID;
 use PasswordGen\Exceptions\InvalidLength;
 use PasswordGen\Database\ConnectionDB;
-use PDOException;
 use Random\RandomException;
 use Dotenv\Dotenv;
+use PDOException;
+use PDO;
 
-$dotenv = Dotenv::createImmutable(realpath(__DIR__ . '/../'));
+$dotenv = Dotenv::createImmutable(getcwd());
 $dotenv->load();
+
 class Password
 {
 
@@ -44,13 +46,13 @@ class Password
             $password .= $mergedChars[$randomIndex];
         }
 
-        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
-        $cnx = $connectionDB->connect();
+        $cnx = ConnectionDB::connect();
+
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
         }
 
-        $insert = $connectionDB->insertPassword($password, $site, $cnx);
+        $insert = ConnectionDB::insertPassword($password, $site, $cnx);
         if (!$insert) {
             throw new PDOException('Cannot create password');
         }
@@ -70,14 +72,13 @@ class Password
             throw new InvalidID('Invalid ID');
         }
 
-        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
-        $cnx = $connectionDB->connect();
+        $cnx = ConnectionDB::connect();
 
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
         }
 
-        if (!$connectionDB->deletePassword($id, $cnx)) {
+        if (!ConnectionDB::deletePassword($id, $cnx)) {
             return "\033[31mError to delete password.\033[0m";
 
         }
@@ -100,28 +101,28 @@ class Password
             throw new InvalidLength('Site name cannot be empty.');
         }
 
-        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
-        $cnx = $connectionDB->connect();
+        $cnx = ConnectionDB::connect();
 
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
         }
 
-        if (!$connectionDB->updateSite($id, $site, $cnx)) {
+        if (!ConnectionDB::updateSite($id, $site, $cnx)) {
             return "\033[31mError to update site name.\033[0m";
         }
 
         return "\033[32mSite name updated.\033[0m";
     }
 
-    public function listPasswords():array|string
+    public function listPasswords():array|bool
     {
-        $connectionDB = new ConnectionDB($_ENV['DB_HOSTNAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
-        $cnx = $connectionDB->connect();
+
+        $cnx = ConnectionDB::connect();
+
         if (!$cnx) {
             throw new PDOException('Cannot connect to database');
         }
 
-        return $connectionDB->listPasswords($cnx);
+        return ConnectionDB::listPasswords($cnx);
     }
 }

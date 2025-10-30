@@ -26,8 +26,10 @@ class ShowPasswordsCommand extends Command
         $response = $password->listPasswords();
         $table->setHeaders(['ID', 'Password', "Site"]);
         $rows = [];
-        foreach ($response as $list) {
+        if ($response) {
+            foreach ($response as $list) {
             $rows[] = [$list['id'], $list['password'], $list['site'] ];
+            }
         }
         $table->setRows($rows);
         $table->render();

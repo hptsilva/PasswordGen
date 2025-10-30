@@ -1,39 +1,26 @@
 <?php
 
 namespace PasswordGen\Database;
-use PDO;
 use PDOException;
+use PDO;
 
 class ConnectionDB
 {
 
-    private $hostname, $username, $password, $database;
-
-    public function __construct($hostname, $username, $password, $database)
-    {
-        $this->hostname = $hostname;
-        $this->username = $username;
-        $this->password = $password;
-        $this->database = $database;
-    }
-
-    public function connect(): false|PDO
+    public static function connect(): false|PDO
     {
         try {
+            $database = $_ENV['DB_DATABASE'];
+            $connection = new PDO("sqlite:$database.sqlite");
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $options = [
-                PDO::ATTR_EMULATE_PREPARES   => false,
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ];
-
-            return new PDO("mysql:host=$this->hostname;dbname=$this->database;charset=utf8mb4", $this->username, $this->password, $options);
+            return $connection;
         } catch (PDOException) {
             return false;
         }
     }
 
-    public function insertPassword(string $password, string $site, PDO $cnx): bool
+    public static function insertPassword(string $password, string $site, PDO $cnx): bool
     {
         try{
             $query = "INSERT INTO passwords (password, site) VALUES (:password, :site)";
@@ -47,7 +34,7 @@ class ConnectionDB
         return True;
     }
 
-    public function searchPassword(int $id, PDO $cnx): bool
+    public static function searchPassword(int $id, PDO $cnx): bool
     {
         try {
             $query = "SELECT * FROM passwords WHERE id = :id";
@@ -65,10 +52,10 @@ class ConnectionDB
         }
     }
 
-    public function deletePassword(int $id, PDO $cnx): bool
+    public static function deletePassword(int $id, PDO $cnx): bool
     {
         try {
-            if (!$this->searchPassword($id, $cnx)) {
+            if (!self::searchPassword($id, $cnx)) {
                 return false;
             }
             $query = "DELETE FROM passwords WHERE id = :id";
@@ -81,10 +68,10 @@ class ConnectionDB
         return True;
     }
 
-    public function updateSite(int $id, string $site, PDO $cnx): bool
+    public static function updateSite(int $id, string $site, PDO $cnx): bool
     {
         try {
-            if (!$this->searchPassword($id, $cnx)) {
+            if (!self::searchPassword($id, $cnx)) {
                 return false;
             }
             $query = "UPDATE passwords SET site = :site WHERE id = :id";
@@ -98,7 +85,7 @@ class ConnectionDB
         return True;
     }
 
-    public function listPasswords(PDO $cnx): array|bool
+    public static function listPasswords(PDO $cnx): array|bool
     {
         try {
             $query = "SELECT * FROM passwords";
